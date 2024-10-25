@@ -1,8 +1,9 @@
 {
-  "include": ["."],
+  "include": [".", ".react-router/types/**/*"],
   "compilerOptions": {
+    "rootDirs": [".", "./.react-router/types"],
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["vite/client"],
+    "types": ["@react-router/node", "vite/client"],
     "baseUrl": ".",
     "target": "ESNext",
     "allowJs": false,
@@ -15,6 +16,7 @@
     "moduleResolution": "Bundler",
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "plugins": [{ "name": "@react-router/dev" }]
   }
 }
