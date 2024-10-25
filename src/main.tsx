@@ -31,49 +31,61 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   </React.StrictMode>
 );
 
-let router = createBrowserRouter([
+let router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      Component: Layout,
+      HydrateFallback: Fallback,
+      children: [
+        {
+          index: true,
+          loader: homeLoader,
+          Component: Home,
+        },
+        {
+          path: "todos",
+          action: todosAction,
+          loader: todosLoader,
+          Component: TodosList,
+          ErrorBoundary: TodosBoundary,
+          children: [
+            {
+              path: ":id",
+              loader: todoLoader,
+              Component: Todo,
+            },
+          ],
+        },
+        {
+          path: "deferred",
+          loader: deferredLoader,
+          Component: DeferredPage,
+        },
+      ],
+    },
+  ],
   {
-    path: "/",
-    Component: Layout,
-    children: [
-      {
-        index: true,
-        loader: homeLoader,
-        Component: Home,
-      },
-      {
-        path: "todos",
-        action: todosAction,
-        loader: todosLoader,
-        Component: TodosList,
-        ErrorBoundary: TodosBoundary,
-        children: [
-          {
-            path: ":id",
-            loader: todoLoader,
-            Component: Todo,
-          },
-        ],
-      },
-      {
-        path: "deferred",
-        loader: deferredLoader,
-        Component: DeferredPage,
-      },
-    ],
-  },
-]);
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  }
+);
 
 // App
 export default function App() {
-  return <RouterProvider router={router} fallbackElement={<Fallback />} />;
+  return <RouterProvider router={router} />;
 }
 
+// Layout
 export function Fallback() {
   return <p>Performing initial data load</p>;
 }
 
-// Layout
 export function Layout() {
   let navigation = useNavigation();
   let revalidator = useRevalidator();
