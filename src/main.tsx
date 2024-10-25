@@ -16,7 +16,6 @@ import {
 } from "react-router-dom";
 
 import "./index.css";
-import { sleep } from "./sleep";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -43,8 +42,7 @@ let router = createBrowserRouter(
       children: [
         {
           index: true,
-          loader: homeLoader,
-          Component: Home,
+          lazy: () => import("./routes/home").then(convert),
         },
         {
           path: "todos",
@@ -144,28 +142,6 @@ export function Layout() {
       </p>
       <hr />
       <Outlet />
-    </>
-  );
-}
-
-// Home
-interface HomeLoaderData {
-  date: string;
-}
-
-export async function homeLoader(): Promise<HomeLoaderData> {
-  await sleep();
-  return {
-    date: new Date().toISOString(),
-  };
-}
-
-export function Home() {
-  let data = useLoaderData() as HomeLoaderData;
-  return (
-    <>
-      <h2>Home</h2>
-      <p>Date from loader: {data.date}</p>
     </>
   );
 }
