@@ -1,6 +1,6 @@
 import { Outlet, Scripts } from "react-router";
 
-import "../src/index.css";
+import "./index.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
