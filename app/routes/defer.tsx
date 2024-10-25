@@ -1,24 +1,10 @@
+import * as Route from "./+types.defer";
 import React from "react";
-import {
-  useLoaderData,
-  Await,
-  useAsyncValue,
-  useAsyncError,
-} from "react-router";
-
-interface DeferredRouteLoaderData {
-  critical1: string;
-  critical2: string;
-  lazyResolved: Promise<string>;
-  lazy1: Promise<string>;
-  lazy2: Promise<string>;
-  lazy3: Promise<string>;
-  lazyError: Promise<string>;
-}
+import { Await, useAsyncValue, useAsyncError } from "react-router";
 
 const rand = () => Math.round(Math.random() * 100);
 const resolve = (d: string, ms: number) =>
-  new Promise((r) => setTimeout(() => r(`${d} - ${rand()}`), ms));
+  new Promise<string>((r) => setTimeout(() => r(`${d} - ${rand()}`), ms));
 const reject = (d: Error | string, ms: number) =>
   new Promise((_, r) =>
     setTimeout(() => {
@@ -43,8 +29,9 @@ export async function clientLoader() {
   };
 }
 
-export default function DeferredPage() {
-  let data = useLoaderData() as DeferredRouteLoaderData;
+export default function DeferredPage({
+  loaderData: data,
+}: Route.ComponentProps) {
   return (
     <div>
       {/* Critical data renders immediately */}
