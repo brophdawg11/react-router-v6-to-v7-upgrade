@@ -1,18 +1,17 @@
+import * as Route from "./+types.todos";
 import React from "react";
 import {
-  ActionFunctionArgs,
   Form,
+  isRouteErrorResponse,
   Link,
   Outlet,
   useFetcher,
-  useLoaderData,
   useNavigation,
-  useRouteError,
 } from "react-router";
 import { sleep } from "../sleep";
-import { deleteTodo, addTodo, Todos, getTodos } from "../todos";
+import { deleteTodo, addTodo, getTodos } from "../todos";
 
-export async function clientAction({ request }: ActionFunctionArgs) {
+export async function clientAction({ request }: Route.ClientActionArgs) {
   await sleep();
 
   let formData = await request.formData();
@@ -38,13 +37,12 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   });
 }
 
-export async function clientLoader(): Promise<Todos> {
+export async function clientLoader() {
   await sleep();
   return getTodos();
 }
 
-export default function TodosList() {
-  let todos = useLoaderData() as Todos;
+export default function TodosList({ loaderData: todos }: Route.ComponentProps) {
   let navigation = useNavigation();
   let formRef = React.useRef<HTMLFormElement>(null);
 
@@ -92,12 +90,17 @@ export default function TodosList() {
   );
 }
 
-export function ErrorBoundary() {
-  let error = useRouteError() as Error;
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   return (
     <>
       <h2>Error 💥</h2>
-      <p>{error.message}</p>
+      <p>
+        {error instanceof Error
+          ? error.message
+          : isRouteErrorResponse(error)
+          ? error.status + error.statusText + error.data
+          : "Unknown Error"}
+      </p>
     </>
   );
 }
