@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
+import type { ActionFunctionArgs } from "react-router-dom";
 import {
   Await,
   createBrowserRouter,
@@ -15,15 +15,14 @@ import {
   useFetchers,
   useLoaderData,
   useNavigation,
-  useParams,
   useRevalidator,
   useRouteError,
 } from "react-router-dom";
 
 import type { Todos } from "./todos";
 import { addTodo, deleteTodo, getTodos } from "./todos";
-
 import "./index.css";
+import { sleep } from "./sleep";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -52,8 +51,13 @@ let router = createBrowserRouter(
           children: [
             {
               path: ":id",
-              loader: todoLoader,
-              Component: Todo,
+              lazy: () =>
+                import("./routes/todo").then((m) => {
+                  return {
+                    loader: m.clientLoader,
+                    Component: m.default,
+                  };
+                }),
             },
           ],
         },
@@ -285,34 +289,6 @@ export function TodoItem({ id, todo }: TodoItemProps) {
   );
 }
 
-// Todo
-export async function todoLoader({
-  params,
-}: LoaderFunctionArgs): Promise<string> {
-  await sleep();
-  let todos = getTodos();
-  if (!params.id) {
-    throw new Error("Expected params.id");
-  }
-  let todo = todos[params.id];
-  if (!todo) {
-    throw new Error(`Uh oh, I couldn't find a todo with id "${params.id}"`);
-  }
-  return todo;
-}
-
-export function Todo() {
-  let params = useParams();
-  let todo = useLoaderData() as string;
-  return (
-    <>
-      <h2>Nested Todo Route:</h2>
-      <p>id: {params.id}</p>
-      <p>todo: {todo}</p>
-    </>
-  );
-}
-
 // Deferred
 interface DeferredRouteLoaderData {
   critical1: string;
@@ -408,11 +384,6 @@ function RenderAwaitedError() {
       {error.message} {error.stack}
     </p>
   );
-}
-
-// Utils
-export function sleep(n: number = 500) {
-  return new Promise((r) => setTimeout(r, n));
 }
 
 // HMR
