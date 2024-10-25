@@ -1,28 +1,12 @@
 import type { RouteConfig } from "@react-router/dev/routes";
+import { layout, route, index } from "@react-router/dev/routes";
 
 export const routes: RouteConfig = [
-  {
-    path: "/",
-    file: "../src/routes/layout.tsx",
-    children: [
-      {
-        index: true,
-        file: "../src/routes/home.tsx",
-      },
-      {
-        path: "todos",
-        file: "../src/routes/todos.tsx",
-        children: [
-          {
-            path: ":id",
-            file: "../src/routes/todo.tsx",
-          },
-        ],
-      },
-      {
-        path: "deferred",
-        file: "../src/routes/defer.tsx",
-      },
-    ],
-  },
+  layout("../src/routes/layout.tsx", [
+    index("../src/routes/home.tsx"),
+    route("todos", "../src/routes/todos.tsx", [
+      route(":id", "../src/routes/todo.tsx"),
+    ]),
+    route("deferred", "../src/routes/defer.tsx"),
+  ]),
 ];
