@@ -1,23 +1,19 @@
-import { useLoaderData } from "react-router";
+import * as Route from "./+types.home";
 import { sleep } from "../sleep";
 
-interface HomeLoaderData {
-  date: string;
-}
-
-export async function clientLoader(): Promise<HomeLoaderData> {
+export async function clientLoader() {
   await sleep();
   return {
-    date: new Date().toISOString(),
+    date: new Date(),
+    message: "hello",
   };
 }
 
-export default function Home() {
-  let data = useLoaderData() as HomeLoaderData;
+export default function Home({ loaderData: data }: Route.ComponentProps) {
   return (
     <>
       <h2>Home</h2>
-      <p>Date from loader: {data.date}</p>
+      <p>Date from loader: {data.date.toISOString()}</p>
     </>
   );
 }
