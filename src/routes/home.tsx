@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 import { sleep } from "../sleep";
 
 interface HomeLoaderData {

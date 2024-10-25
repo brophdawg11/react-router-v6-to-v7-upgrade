@@ -1,11 +1,10 @@
 import React from "react";
 import {
-  defer,
   useLoaderData,
   Await,
   useAsyncValue,
   useAsyncError,
-} from "react-router-dom";
+} from "react-router";
 
 interface DeferredRouteLoaderData {
   critical1: string;
@@ -33,7 +32,7 @@ const reject = (d: Error | string, ms: number) =>
   );
 
 export async function clientLoader() {
-  return defer({
+  return {
     critical1: await resolve("Critical 1", 250),
     critical2: await resolve("Critical 2", 500),
     lazyResolved: Promise.resolve("Lazy Data immediately resolved - " + rand()),
@@ -41,7 +40,7 @@ export async function clientLoader() {
     lazy2: resolve("Lazy 2", 1500),
     lazy3: resolve("Lazy 3", 2000),
     lazyError: reject(new Error("Kaboom!"), 2500),
-  });
+  };
 }
 
 export default function DeferredPage() {
