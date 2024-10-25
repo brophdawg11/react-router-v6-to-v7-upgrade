@@ -1,15 +1,10 @@
-import { LoaderFunctionArgs, useLoaderData, useParams } from "react-router";
+import * as Route from "./+types.todo";
 import { sleep } from "../sleep";
 import { getTodos } from "../todos";
 
-export async function clientLoader({
-  params,
-}: LoaderFunctionArgs): Promise<string> {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   await sleep();
   let todos = getTodos();
-  if (!params.id) {
-    throw new Error("Expected params.id");
-  }
   let todo = todos[params.id];
   if (!todo) {
     throw new Error(`Uh oh, I couldn't find a todo with id "${params.id}"`);
@@ -17,9 +12,10 @@ export async function clientLoader({
   return todo;
 }
 
-export default function Todo() {
-  let params = useParams();
-  let todo = useLoaderData() as string;
+export default function Todo({
+  loaderData: todo,
+  params,
+}: Route.ComponentProps) {
   return (
     <>
       <h2>Nested Todo Route:</h2>
